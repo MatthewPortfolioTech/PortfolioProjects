@@ -103,7 +103,7 @@
   .lab-intro-text { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
   .lab-intro-text strong { color: var(--text-primary); font-weight: 500; }
   .labs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-  .lab-card { background: var(--bg); border: 1px solid var(--border); border-radius: 18px; padding: 28px; transition: all 0.25s; position: relative; overflow: hidden; }
+  .lab-card { background: var(--bg); border: 1px solid var(--border); border-radius: 18px; padding: 28px; transition: all 0.25s; position: relative; overflow: hidden; color: inherit; }
   .lab-card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.25s; border-radius: 18px; }
   .lab-card.blue::before { background: radial-gradient(circle at top left, rgba(0,113,227,0.1), transparent 60%); }
   .lab-card.teal::before { background: radial-gradient(circle at top left, rgba(48,209,88,0.08), transparent 60%); }
@@ -295,31 +295,31 @@
     <!-- ALL -->
     <div class="tab-panel active" id="tab-all">
       <div class="labs-grid">
-        <div class="lab-card blue">
+        <a href="acmecorp.html" class="lab-card blue" style="text-decoration:none;display:block;cursor:pointer;">
           <div class="lab-cat-badge" style="color:#2997ff;">🌐 Networking</div>
           <div class="lab-complexity intermediate">Intermediate</div>
           <div class="lab-title">AcmeCorp Branch Network</div>
           <div class="lab-desc">A simulated enterprise network for a fictional company built in Cisco Packet Tracer — tackling IP addressing from the ground up, subnetting across multiple sites, SD-WAN concepts, and inter-branch connectivity, all woven together into a real-world-style deployment.</div>
           <div class="lab-footer">
             <div class="lab-tags"><span class="tag blue">VLANs</span><span class="tag blue">Routing</span><span class="tag gray">Cisco IOS</span><span class="tag gray">Packet Tracer</span></div>
-            <a href="acmecorp.html" class="lab-view-btn">View Project →</a>
+            <span class="lab-view-btn">View Project →</span>
           </div>
-        </div>
+        </a>
       </div>
     </div>
 
     <!-- PACKET TRACER -->
     <div class="tab-panel" id="tab-pt">
       <div class="labs-grid">
-        <div class="lab-card blue">
+        <a href="acmecorp.html" class="lab-card blue" style="text-decoration:none;display:block;cursor:pointer;">
           <div class="lab-complexity intermediate">Intermediate</div>
           <div class="lab-title">AcmeCorp Branch Network</div>
           <div class="lab-desc">A simulated enterprise network for a fictional company built in Cisco Packet Tracer — tackling IP addressing from the ground up, subnetting across multiple sites, SD-WAN concepts, and inter-branch connectivity, all woven together into a real-world-style deployment.</div>
           <div class="lab-footer">
             <div class="lab-tags"><span class="tag blue">VLANs</span><span class="tag blue">Routing</span><span class="tag gray">Cisco IOS</span><span class="tag gray">Packet Tracer</span></div>
-            <a href="acmecorp.html" class="lab-view-btn">View Project →</a>
+            <span class="lab-view-btn">View Project →</span>
           </div>
-        </div>
+        </a>
       </div>
     </div>
 
