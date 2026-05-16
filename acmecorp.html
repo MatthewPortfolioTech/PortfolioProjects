@@ -170,7 +170,7 @@
     <div class="project-meta">
       <div class="meta-item">
         <span class="meta-label">Status</span>
-        <span class="meta-value wip">⏳ Phase 2 In Progress</span>
+        <span class="meta-value wip">⏳ Phase 4 In Progress</span>
       </div>
       <div class="meta-item">
         <span class="meta-label">Tool</span>
@@ -214,9 +214,9 @@
     <!-- PHASE OVERVIEW GRID -->
     <div class="progress-overview">
       <div class="progress-card"><div class="progress-card-num">Phase 01</div><div class="progress-card-name">IP Design</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 02</div><div class="progress-card-name">Physical Topology</div><div class="progress-bar-wrap"><div class="progress-bar wip"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 03</div><div class="progress-card-name">VLANs</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 04</div><div class="progress-card-name">OSPF Routing</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 02</div><div class="progress-card-name">Physical Topology</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 03</div><div class="progress-card-name">VLANs</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 04</div><div class="progress-card-name">OSPF Routing</div><div class="progress-bar-wrap"><div class="progress-bar wip"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 05</div><div class="progress-card-name">Redundancy</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 06</div><div class="progress-card-name">Services</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 07</div><div class="progress-card-name">NAT</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
@@ -297,7 +297,7 @@
           <div class="phase-name">Physical Topology</div>
           <div class="phase-tagline">Devices placed, cabled, and WAN link confirmed up/up</div>
         </div>
-        <div class="phase-badges"><span class="badge wip">⏳ In Progress</span></div>
+        <div class="phase-badges"><span class="badge done">✓ Complete</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
@@ -452,27 +452,171 @@ ip default-gateway 10.1.1.1</pre></div>
 
     <!-- ─── PHASE 3–10 PLACEHOLDERS ─── -->
 
-    <div class="phase" id="phase3">
+    <div class="phase open" id="phase3">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">03</span>
-        <div class="phase-title-wrap"><div class="phase-name">VLANs</div><div class="phase-tagline">Segment traffic by department across the switching layer</div></div>
-        <div class="phase-badges"><span class="badge planned">Planned</span></div>
+        <div class="phase-title-wrap">
+          <div class="phase-name">VLANs</div>
+          <div class="phase-tagline">Segment traffic by department across the switching layer</div>
+        </div>
+        <div class="phase-badges"><span class="badge done">✓ Complete</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
-        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">This phase hasn't started yet. Documentation will be added as work progresses.</p></div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Overview</div>
+          <p class="phase-text">VLANs (Virtual LANs) split a single physical switch into multiple isolated logical networks. Instead of buying separate switches for each department, one switch can carry Users, Servers, Management, and Native traffic completely isolated from each other — unless you explicitly allow them to talk.</p>
+          <p class="phase-text"><strong>Why does this matter?</strong> A PC on the USERS VLAN can't sniff traffic from the SERVERS VLAN even though they're on the same physical switch. Security and performance in one shot.</p>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">VLAN Plan — HQ Sydney</div>
+          <table class="data-table">
+            <thead><tr><th>VLAN ID</th><th>Name</th><th>Subnet</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>10</td><td>USERS</td><td>10.1.1.0/24</td><td>End user workstations (PC1–PC4)</td></tr>
+              <tr><td>20</td><td>SERVERS</td><td>10.1.2.0/24</td><td>Internal server (HQ-SYD-SERVER)</td></tr>
+              <tr><td>30</td><td>MANAGEMENT</td><td>10.1.9.0/24</td><td>Switch management interfaces</td></tr>
+              <tr><td>99</td><td>NATIVE</td><td>—</td><td>Native VLAN on trunk links (untagged)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Step 1 — Create VLANs on Core Switch</div>
+          <div class="code-label">HQ-SYD-SW-CORE</div>
+          <div class="code-block"><pre>configure terminal
+
+vlan 10
+ name USERS
+vlan 20
+ name SERVERS
+vlan 30
+ name MANAGEMENT
+vlan 99
+ name NATIVE
+
+exit
+wr</pre></div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Step 2 — Configure Trunk to Router (Router-on-a-Stick)</div>
+          <p class="phase-text">The router needs to route between VLANs. Instead of running a separate cable per VLAN, we use one trunk link carrying all VLANs tagged with 802.1Q. The router uses <strong>subinterfaces</strong> — one per VLAN.</p>
+          <div class="code-label">HQ-SYD-SW-CORE — uplink to HQ-SYD-R1</div>
+          <div class="code-block"><pre>interface GigabitEthernet1/0/1
+ description TRUNK_TO_HQ-SYD-R1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,99
+ switchport trunk native vlan 99
+exit
+wr</pre></div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Step 3 — Trunk to Floor Switches</div>
+          <div class="code-label">HQ-SYD-SW-CORE — downlinks to floor switches</div>
+          <div class="code-block"><pre>interface GigabitEthernet1/0/2
+ description TRUNK_TO_HQ-SYD-SW-FLOOR1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,99
+ switchport trunk native vlan 99
+
+interface GigabitEthernet1/0/3
+ description TRUNK_TO_HQ-SYD-SW-FLOOR2
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,99
+ switchport trunk native vlan 99
+
+exit
+wr</pre></div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Step 4 — Access Ports on Floor Switches</div>
+          <div class="code-label">HQ-SYD-SW-FLOOR1 — PC1 and PC2 on VLAN 10</div>
+          <div class="code-block"><pre>configure terminal
+
+interface FastEthernet0/1
+ description HQ-PC1
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+
+interface FastEthernet0/2
+ description HQ-PC2
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+
+exit
+wr</pre></div>
+          <div class="code-label">HQ-SYD-SW-FLOOR2 — PC3 and PC4 on VLAN 10</div>
+          <div class="code-block"><pre>configure terminal
+
+interface FastEthernet0/1
+ description HQ-PC3
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+
+interface FastEthernet0/2
+ description HQ-PC4
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+
+exit
+wr</pre></div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Lessons Learned</div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ Native VLAN mismatch — CDP warning</div>
+            <p>After configuring trunk on HQ-SYD-SW-CORE with native VLAN 99, a CDP warning appeared:<br><br>
+            <em>Native VLAN mismatch discovered on GigabitEthernet1/0/2 (99), with HQ-SYD-SW-FLOOR1 GigabitEthernet0/1 (1)</em><br><br>
+            This means the core switch expects native VLAN 99 on the trunk, but the floor switch still has the default native VLAN 1. Fix: set native VLAN 99 on the floor switches too so both ends match.</p>
+          </div>
+          <div class="code-label">Fix — set native VLAN on floor switches</div>
+          <div class="code-block"><pre>interface GigabitEthernet0/1
+ switchport trunk native vlan 99</pre></div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Native VLAN must match on BOTH ends</div>
+            <p>A trunk link has two ends. If VLAN 99 is native on one side and VLAN 1 on the other, frames get misclassified — untagged traffic lands in the wrong VLAN. Always set native VLAN consistently across all trunk ports.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 spanning-tree portfast on access ports</div>
+            <p>By default STP makes a port wait 30 seconds before forwarding (listening → learning → forwarding). End devices don't need this — they'll never create loops. <strong>portfast</strong> skips the delay so PCs connect instantly.</p>
+          </div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Progress Checklist</div>
+          <div class="tag-row">
+            <span class="tag teal">✓ VLANs created on core switch</span>
+            <span class="tag teal">✓ Trunk to router configured</span>
+            <span class="tag teal">✓ Trunk to floor switches configured</span>
+            <span class="tag teal">✓ Access ports configured on floor switches</span>
+            <span class="tag orange">⏳ Native VLAN mismatch — fixing on floor switches</span>
+            <span class="tag gray">Planned — Router subinterfaces (inter-VLAN routing)</span>
+            <span class="tag gray">Planned — VLAN verification and end-to-end ping</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <div class="phase" id="phase4">
+    <div class="phase open" id="phase4">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">04</span>
         <div class="phase-title-wrap"><div class="phase-name">OSPF Routing</div><div class="phase-tagline">Dynamic routing between sites using OSPF</div></div>
-        <div class="phase-badges"><span class="badge planned">Planned</span></div>
+        <div class="phase-badges"><span class="badge wip">⏳ In Progress</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
-        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">This phase hasn't started yet. Documentation will be added as work progresses.</p></div>
+        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">Phase 4 just started — documentation will be added as work progresses.</p></div>
       </div>
     </div>
 
