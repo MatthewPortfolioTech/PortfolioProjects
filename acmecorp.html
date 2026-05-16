@@ -493,12 +493,18 @@ vlan 10
 vlan 20
  name SERVERS
 vlan 30
- name MANAGEMENT
+ name VOIP
 vlan 99
- name NATIVE
+ name MANAGEMENT
 
 exit
 wr</pre></div>
+          <div class="screenshots" style="grid-template-columns:1fr;">
+            <div class="screenshot">
+              <img src="photo/P03-S01-HQ-SYD-SW-CORE-vlan-brief.png" alt="VLAN brief on core switch">
+              <div class="screenshot-cap">S01 — HQ-SYD-SW-CORE · show vlan brief · VLANs 10, 20, 30, 99 all active</div>
+            </div>
+          </div>
         </div>
 
         <div class="phase-section">
@@ -512,6 +518,12 @@ wr</pre></div>
  switchport trunk native vlan 99
 exit
 wr</pre></div>
+          <div class="screenshots" style="grid-template-columns:1fr;">
+            <div class="screenshot">
+              <img src="photo/P03-S02-HQ-SYD-SW-CORE-trunk-up.png" alt="Trunk to router up">
+              <div class="screenshot-cap">S02 — HQ-SYD-SW-CORE · show interface trunk · Gi1/0/1 trunking · native VLAN 99 · VLANs 10,20,30,99 active</div>
+            </div>
+          </div>
         </div>
 
         <div class="phase-section">
@@ -531,14 +543,60 @@ interface GigabitEthernet1/0/3
 
 exit
 wr</pre></div>
+          <div class="screenshots" style="grid-template-columns:1fr;">
+            <div class="screenshot">
+              <img src="photo/P03-S03-HQ-SYD-SW-CORE-all-trunks-up.png" alt="All three trunks up">
+              <div class="screenshot-cap">S03 — HQ-SYD-SW-CORE · show interfaces trunk · all 3 trunks up · Gi1/0/1, Gi1/0/2, Gi1/0/3 · native VLAN 99</div>
+            </div>
+          </div>
         </div>
 
         <div class="phase-section">
-          <div class="phase-section-title">Step 4 — Access Ports on Floor Switches</div>
-          <div class="code-label">HQ-SYD-SW-FLOOR1 — PC1 and PC2 on VLAN 10</div>
-          <div class="code-block"><pre>configure terminal
+          <div class="phase-section-title">Step 4 — Assign Server Port to VLAN 20</div>
+          <p class="phase-text">HQ-SYD-SERVER connects directly to the core switch and needs to be placed in VLAN 20 (SERVERS).</p>
+          <div class="screenshots" style="grid-template-columns:1fr;">
+            <div class="screenshot">
+              <img src="photo/P03-S04-HQ-SYD-SW-CORE-vlan-brief-server-assigned.png" alt="Server assigned to VLAN 20">
+              <div class="screenshot-cap">S04 — HQ-SYD-SW-CORE · show vlan brief · VLAN 20 SERVERS now has Gi1/0/4 assigned</div>
+            </div>
+          </div>
+        </div>
 
-interface FastEthernet0/1
+        <div class="phase-section">
+          <div class="phase-section-title">Step 5 — Router Subinterfaces (Inter-VLAN Routing)</div>
+          <p class="phase-text">One physical router interface becomes multiple logical subinterfaces — one per VLAN. Each subinterface is tagged with the VLAN ID using <strong>encapsulation dot1Q</strong> and gets the gateway IP for that VLAN.</p>
+          <div class="code-label">HQ-SYD-R1 — subinterfaces for each VLAN</div>
+          <div class="code-block"><pre>interface GigabitEthernet0/0/0.10
+ description USERS_VLAN10
+ encapsulation dot1Q 10
+ ip address 10.1.1.1 255.255.255.0
+
+interface GigabitEthernet0/0/0.20
+ description SERVERS_VLAN20
+ encapsulation dot1Q 20
+ ip address 10.1.2.1 255.255.255.0
+
+interface GigabitEthernet0/0/0.30
+ description VOIP_VLAN30
+ encapsulation dot1Q 30
+ ip address 10.1.3.1 255.255.255.0
+
+interface GigabitEthernet0/0/0.99
+ description MANAGEMENT_VLAN99
+ encapsulation dot1Q 99 native
+ ip address 10.1.9.1 255.255.255.0</pre></div>
+          <div class="screenshots" style="grid-template-columns:1fr;">
+            <div class="screenshot">
+              <img src="photo/P03-S05-HQ-SYD-R1-subinterfaces-up.png" alt="Router subinterfaces up">
+              <div class="screenshot-cap">S05 — HQ-SYD-R1 · show ip interface brief · all 4 subinterfaces up/up with correct IPs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Step 6 — Access Ports on Floor Switches</div>
+          <div class="code-label">HQ-SYD-SW-FLOOR1 — PC1 and PC2 on VLAN 10</div>
+          <div class="code-block"><pre>interface FastEthernet0/1
  description HQ-PC1
  switchport mode access
  switchport access vlan 10
@@ -548,14 +606,9 @@ interface FastEthernet0/2
  description HQ-PC2
  switchport mode access
  switchport access vlan 10
- spanning-tree portfast
-
-exit
-wr</pre></div>
+ spanning-tree portfast</pre></div>
           <div class="code-label">HQ-SYD-SW-FLOOR2 — PC3 and PC4 on VLAN 10</div>
-          <div class="code-block"><pre>configure terminal
-
-interface FastEthernet0/1
+          <div class="code-block"><pre>interface FastEthernet0/1
  description HQ-PC3
  switchport mode access
  switchport access vlan 10
@@ -565,10 +618,24 @@ interface FastEthernet0/2
  description HQ-PC4
  switchport mode access
  switchport access vlan 10
- spanning-tree portfast
+ spanning-tree portfast</pre></div>
+          <div class="screenshots" style="grid-template-columns:1fr;">
+            <div class="screenshot">
+              <img src="photo/P03-S06-HQ-SYD-SW-FLOOR2-vlan-brief.png" alt="Floor 2 VLAN brief">
+              <div class="screenshot-cap">S06 — HQ-SYD-SW-FLOOR2 · show vlan brief · VLAN 10 has Fa0/1 and Fa0/2 assigned</div>
+            </div>
+          </div>
+        </div>
 
-exit
-wr</pre></div>
+        <div class="phase-section">
+          <div class="phase-section-title">Verification — Inter-VLAN Ping Success</div>
+          <p class="phase-text">The final test — PC1 on VLAN 10 (10.1.1.x) pinging the server on VLAN 20 (10.1.2.x). Traffic has to go from PC1 → Floor switch → Core switch → Router → Core switch → Server. If this works, inter-VLAN routing is confirmed end-to-end.</p>
+          <div class="screenshots" style="grid-template-columns:1fr;">
+            <div class="screenshot">
+              <img src="photo/P03-S07-HQ-PC1-inter-vlan-ping-success.png" alt="Inter-VLAN ping success">
+              <div class="screenshot-cap">S07 — HQ-PC1 · ping 10.1.1.1 (gateway) ✓ · ping 10.1.2.10 (server VLAN 20) ✓ · Inter-VLAN routing confirmed working</div>
+            </div>
+          </div>
         </div>
 
         <div class="phase-section">
