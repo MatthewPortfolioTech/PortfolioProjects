@@ -170,7 +170,7 @@
     <div class="project-meta">
       <div class="meta-item">
         <span class="meta-label">Status</span>
-        <span class="meta-value wip">⏳ Phase 4 In Progress</span>
+        <span class="meta-value wip">✅ Phase 4 Complete — Phase 5 Next</span>
       </div>
       <div class="meta-item">
         <span class="meta-label">Tool</span>
@@ -216,7 +216,7 @@
       <div class="progress-card"><div class="progress-card-num">Phase 01</div><div class="progress-card-name">IP Design</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 02</div><div class="progress-card-name">Physical Topology</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 03</div><div class="progress-card-name">VLANs</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 04</div><div class="progress-card-name">OSPF Routing</div><div class="progress-bar-wrap"><div class="progress-bar wip"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 04</div><div class="progress-card-name">OSPF Routing</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 05</div><div class="progress-card-name">Redundancy</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 06</div><div class="progress-card-name">Services</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 07</div><div class="progress-card-name">NAT</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
@@ -443,7 +443,7 @@ ip default-gateway 10.1.1.1</pre></div>
             <span class="tag teal">✓ First ping success</span>
             <span class="tag teal">✓ SW-CORE Vlan1 up</span>
             <span class="tag teal">✓ PC1 → ISP ping success</span>
-            <span class="tag orange">⏳ Floor switches — in progress</span>
+            <span class="tag teal">✓ Floor switches configured</span>
           </div>
         </div>
 
@@ -477,8 +477,8 @@ ip default-gateway 10.1.1.1</pre></div>
             <tbody>
               <tr><td>10</td><td>USERS</td><td>10.1.1.0/24</td><td>End user workstations (PC1–PC4)</td></tr>
               <tr><td>20</td><td>SERVERS</td><td>10.1.2.0/24</td><td>Internal server (HQ-SYD-SERVER)</td></tr>
-              <tr><td>30</td><td>MANAGEMENT</td><td>10.1.9.0/24</td><td>Switch management interfaces</td></tr>
-              <tr><td>99</td><td>NATIVE</td><td>—</td><td>Native VLAN on trunk links (untagged)</td></tr>
+              <tr><td>30</td><td>VOIP</td><td>10.1.3.0/24</td><td>Voice over IP devices</td></tr>
+              <tr><td>99</td><td>MANAGEMENT</td><td>10.1.9.0/24</td><td>Switch management + native VLAN on trunks</td></tr>
             </tbody>
           </table>
         </div>
@@ -666,9 +666,9 @@ interface FastEthernet0/2
             <span class="tag teal">✓ Trunk to router configured</span>
             <span class="tag teal">✓ Trunk to floor switches configured</span>
             <span class="tag teal">✓ Access ports configured on floor switches</span>
-            <span class="tag orange">⏳ Native VLAN mismatch — fixing on floor switches</span>
-            <span class="tag gray">Planned — Router subinterfaces (inter-VLAN routing)</span>
-            <span class="tag gray">Planned — VLAN verification and end-to-end ping</span>
+            <span class="tag teal">✓ Native VLAN mismatch resolved</span>
+            <span class="tag teal">✓ Router subinterfaces configured</span>
+            <span class="tag teal">✓ Inter-VLAN ping success</span>
           </div>
         </div>
 
@@ -678,12 +678,175 @@ interface FastEthernet0/2
     <div class="phase open" id="phase4">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">04</span>
-        <div class="phase-title-wrap"><div class="phase-name">OSPF Routing</div><div class="phase-tagline">Dynamic routing between sites using OSPF</div></div>
-        <div class="phase-badges"><span class="badge wip">⏳ In Progress</span></div>
+        <div class="phase-title-wrap"><div class="phase-name">OSPF Routing</div><div class="phase-tagline">Dynamic routing across 4 sites — no static routes needed</div></div>
+        <div class="phase-badges"><span class="badge done">✓ Complete</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
-        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">Phase 4 just started — documentation will be added as work progresses.</p></div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Overview</div>
+          <p class="phase-text">Phase 4 expands AcmeCorp from a single HQ site into a proper multi-site enterprise. Four offices — Sydney, Tokyo, Singapore, and London — are connected through ISP-CORE using OSPF (Open Shortest Path First). Instead of manually configuring static routes between every site, OSPF automatically advertises and learns routes across the entire network. Add a new subnet, OSPF tells everyone about it automatically.</p>
+          <p class="phase-text"><strong>Why OSPF over static?</strong> With 4 sites and multiple subnets per site, static routes become unmanageable fast. OSPF scales cleanly — every router discovers its neighbours, exchanges link-state information, and builds a full map of the network independently.</p>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Site & Router Summary</div>
+          <table class="data-table">
+            <thead><tr><th>Site</th><th>Router</th><th>Router ID</th><th>LAN Subnet</th><th>WAN Link</th></tr></thead>
+            <tbody>
+              <tr><td>HQ Sydney</td><td>HQ-SYD-R1</td><td>1.1.1.1</td><td>10.1.1.0/24</td><td>10.1.254.0/30</td></tr>
+              <tr><td>ISP Core</td><td>ISP-CORE</td><td>2.2.2.2</td><td>Transit only</td><td>All WAN links</td></tr>
+              <tr><td>Tokyo</td><td>TK-R1</td><td>3.3.3.3</td><td>10.1.17.0/24</td><td>10.1.254.4/30</td></tr>
+              <tr><td>Singapore</td><td>SG-R1</td><td>4.4.4.4</td><td>10.1.33.0/24</td><td>10.1.254.8/30</td></tr>
+              <tr><td>London</td><td>LON-R1</td><td>5.5.5.5</td><td>10.2.1.0/24</td><td>10.2.254.0/30</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">OSPF Configuration — Template</div>
+          <p class="phase-text">Each router runs the same OSPF pattern — unique router ID, networks advertised into Area 0, and passive interfaces on LAN-facing ports so OSPF hellos don't get sent to end devices.</p>
+          <div class="code-label">Applied on each site router (example: HQ-SYD-R1)</div>
+          <div class="code-block"><pre>router ospf 1
+ router-id 1.1.1.1
+ network 10.1.1.0 0.0.0.255 area 0
+ network 10.1.254.0 0.0.0.3 area 0
+ passive-interface GigabitEthernet0/0/0</pre></div>
+          <div class="code-label">ISP-CORE — advertises all WAN transit links</div>
+          <div class="code-block"><pre>router ospf 1
+ router-id 2.2.2.2
+ network 10.1.254.0 0.0.0.3 area 0
+ network 10.1.254.4 0.0.0.3 area 0
+ network 10.1.254.8 0.0.0.3 area 0
+ network 10.2.254.0 0.0.0.3 area 0</pre></div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Key Verification Commands</div>
+          <div class="code-block"><pre>show ip ospf neighbor        ! Check adjacency state — want FULL
+show ip route ospf           ! See OSPF-learned routes (marked O)
+show ip interface brief      ! Check interface status
+show controllers Serial0/x/x ! Check DCE/DTE and clock rate</pre></div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Screenshots</div>
+          <div class="screenshots">
+            <div class="screenshot">
+              <img src="photo/P04-S01-HQ-SYD-R1-ospf-neighbor-full.png" alt="HQ-SYD-R1 OSPF neighbour FULL">
+              <div class="screenshot-cap">S01 — HQ-SYD-R1 · show ip ospf neighbor · first adjacency FULL</div>
+            </div>
+            <div class="screenshot">
+              <img src="photo/P04-S02-HQ-SYD-R1-ospf-routes-tokyo.png" alt="OSPF routes to Tokyo">
+              <div class="screenshot-cap">S02 — HQ-SYD-R1 · show ip route ospf · Tokyo routes appearing</div>
+            </div>
+          </div>
+          <div class="screenshots">
+            <div class="screenshot">
+              <img src="photo/P04-S03-HQ-PC1-ping-tokyo-success.png" alt="PC1 ping Tokyo success">
+              <div class="screenshot-cap">S03 — HQ-PC1 → Tokyo ping success 🎉</div>
+            </div>
+            <div class="screenshot">
+              <img src="photo/P04-S04-topology-sites-labelled.png" alt="Full topology with all sites labelled">
+              <div class="screenshot-cap">S04 — Full topology — all 4 sites connected through ISP-CORE</div>
+            </div>
+          </div>
+          <div class="screenshots">
+            <div class="screenshot">
+              <img src="photo/P04-S05-ISP-CORE-all-neighbors-full.png" alt="ISP-CORE all neighbours FULL">
+              <div class="screenshot-cap">S05 — ISP-CORE · all 4 site routers showing FULL adjacency</div>
+            </div>
+            <div class="screenshot">
+              <img src="photo/P04-S06-HQ-SYD-R1-ospf-all-sites.png" alt="HQ-SYD-R1 OSPF all sites">
+              <div class="screenshot-cap">S06 — HQ-SYD-R1 · show ip route ospf · routes to all 4 sites</div>
+            </div>
+          </div>
+          <div class="screenshots">
+            <div class="screenshot">
+              <img src="photo/P04-S07-HQ-PC1-ping-all-sites.png" alt="PC1 ping all sites">
+              <div class="screenshot-cap">S07 — HQ-PC1 pinging all remote sites successfully</div>
+            </div>
+            <div class="screenshot">
+              <img src="photo/P04-S08-HQ-SYD-R1-ospf-four-sites.png" alt="OSPF four sites routing table">
+              <div class="screenshot-cap">S08 — HQ-SYD-R1 · full routing table with all 4 sites</div>
+            </div>
+          </div>
+          <div class="screenshots">
+            <div class="screenshot">
+              <img src="photo/P04-S09-HQ-PC1-ping-london-success.png" alt="PC1 ping London success">
+              <div class="screenshot-cap">S09 — HQ-PC1 → London ping success</div>
+            </div>
+            <div class="screenshot">
+              <img src="photo/P04-S10-full-topology-hero.png" alt="Full topology hero shot">
+              <div class="screenshot-cap">S10 — Full AcmeCorp topology — HQ, Tokyo, Singapore, London all live</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Troubleshooting</div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ Tokyo PC unreachable — switch ports on wrong VLAN</div>
+            <p>Tokyo PCs were on VLAN 10 on the access switch, but the router had no subinterfaces configured for inter-VLAN routing. Fixed by moving the ports back to VLAN 1 so traffic could reach the router directly without needing subinterfaces at this stage.</p>
+          </div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ Singapore OSPF not forming — ISP-CORE powered off 😂</div>
+            <p>After adding a second NIM-2T module to ISP-CORE to support the Singapore serial link, the router had been powered off and not restarted. OSPF adjacency never formed because the router wasn't running. Powered it back on — adjacency came up immediately.</p>
+          </div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ London serial link down — wrong DCE end selected</div>
+            <p>The serial link between ISP-CORE and LON-R1 stayed down after cabling. Used <code>show controllers Serial0/x/x</code> to check DCE/DTE — the wrong end had been selected as DCE. The DCE end must have <code>clock rate</code> configured or the link stays down. Recabled with the correct end as DCE.</p>
+          </div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ London IP on wrong interface</div>
+            <p>The cable physically landed on Serial0/2/1 but the IP address was configured on Serial0/1/0. Interface showed up but no connectivity. Verified with <code>show ip interface brief</code> — moved the IP to the correct interface.</p>
+          </div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Key Concepts Learned</div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 OSPF Hello packets — how neighbours find each other</div>
+            <p>OSPF sends Hello packets every <strong>10 seconds</strong> on ethernet links. Routers on the same subnet hear each other's hellos and form an adjacency. If hellos stop for 40 seconds (dead interval), the neighbour is declared down.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 FULL state = adjacency complete</div>
+            <p>OSPF adjacency goes through several states — INIT, 2-WAY, EXSTART, EXCHANGE, LOADING, then <strong>FULL</strong>. FULL means the two routers have exchanged their complete link-state databases and routes are being used. Anything less than FULL means something is wrong.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Router ID must be unique</div>
+            <p>Every OSPF router needs a unique Router ID across the entire network. Duplicate IDs cause adjacency problems. Best practice is to set it manually with <code>router-id X.X.X.X</code> rather than letting OSPF pick one automatically from interface IPs.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Passive interface — stops hellos going to PCs</div>
+            <p>By default OSPF sends hellos out every interface in the network statement. LAN interfaces facing end devices don't need this — it wastes bandwidth and confuses PCs. <code>passive-interface</code> stops hellos on that port while still advertising the subnet into OSPF.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Wildcard mask = inverse of subnet mask</div>
+            <p>OSPF network statements use wildcard masks, not subnet masks. A /24 subnet mask is 255.255.255.0, so the wildcard is 0.0.0.255. A /30 is 255.255.255.252, wildcard is 0.0.0.3. Flip every bit.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 DCE end must have clock rate — always check with show controllers</div>
+            <p>On serial links, one end is DCE (provides the clock signal) and the other is DTE. The DCE end needs <code>clock rate</code> set or the link stays down. <code>show controllers Serial0/x/x</code> tells you which end you're on — look for "DCE" or "DTE" in the output.</p>
+          </div>
+        </div>
+
+        <div class="phase-section">
+          <div class="phase-section-title">Progress Checklist</div>
+          <div class="tag-row">
+            <span class="tag teal">✓ All 4 site routers added</span>
+            <span class="tag teal">✓ Serial WAN links cabled and up</span>
+            <span class="tag teal">✓ OSPF configured on all routers</span>
+            <span class="tag teal">✓ All adjacencies FULL</span>
+            <span class="tag teal">✓ Routes propagating to all sites</span>
+            <span class="tag teal">✓ HQ-PC1 → Tokyo ping success</span>
+            <span class="tag teal">✓ HQ-PC1 → Singapore ping success</span>
+            <span class="tag teal">✓ HQ-PC1 → London ping success</span>
+            <span class="tag teal">✓ Full topology hero shot captured</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
