@@ -170,7 +170,7 @@
     <div class="project-meta">
       <div class="meta-item">
         <span class="meta-label">Status</span>
-        <span class="meta-value wip">✅ Phase 4 Complete — Phase 5 Next</span>
+        <span class="meta-value wip">⏳ Phase 10 (IPv6) — Final Phase</span>
       </div>
       <div class="meta-item">
         <span class="meta-label">Tool</span>
@@ -199,12 +199,13 @@
       <li><a href="#phase2"><span class="toc-num">02</span> Physical Topology</a></li>
       <li><a href="#phase3"><span class="toc-num">03</span> VLANs</a></li>
       <li><a href="#phase4"><span class="toc-num">04</span> OSPF Routing</a></li>
-      <li><a href="#phase5"><span class="toc-num">05</span> Redundancy</a></li>
-      <li><a href="#phase6"><span class="toc-num">06</span> Services</a></li>
-      <li><a href="#phase7"><span class="toc-num">07</span> NAT</a></li>
+      <li><a href="#phase5"><span class="toc-num">05</span> DHCP</a></li>
+      <li><a href="#phase6"><span class="toc-num">06</span> Redundancy</a></li>
+      <li><a href="#phase7"><span class="toc-num">07</span> NAT &amp; Internet</a></li>
       <li><a href="#phase8"><span class="toc-num">08</span> Security</a></li>
       <li><a href="#phase9"><span class="toc-num">09</span> SD-WAN</a></li>
       <li><a href="#phase10"><span class="toc-num">10</span> IPv6</a></li>
+      <li><a href="#commands"><span class="toc-num">⌘</span> Commands</a></li>
     </ul>
   </aside>
 
@@ -217,11 +218,11 @@
       <div class="progress-card"><div class="progress-card-num">Phase 02</div><div class="progress-card-name">Physical Topology</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 03</div><div class="progress-card-name">VLANs</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 04</div><div class="progress-card-name">OSPF Routing</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 05</div><div class="progress-card-name">Redundancy</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 06</div><div class="progress-card-name">Services</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 07</div><div class="progress-card-name">NAT</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 08</div><div class="progress-card-name">Security</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
-      <div class="progress-card"><div class="progress-card-num">Phase 09</div><div class="progress-card-name">SD-WAN</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 05</div><div class="progress-card-name">DHCP</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 06</div><div class="progress-card-name">Redundancy</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 07</div><div class="progress-card-name">NAT &amp; Internet</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 08</div><div class="progress-card-name">Security</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
+      <div class="progress-card"><div class="progress-card-num">Phase 09</div><div class="progress-card-name">SD-WAN</div><div class="progress-bar-wrap"><div class="progress-bar done"></div></div></div>
       <div class="progress-card"><div class="progress-card-num">Phase 10</div><div class="progress-card-name">IPv6</div><div class="progress-bar-wrap"><div class="progress-bar planned"></div></div></div>
     </div>
 
@@ -853,19 +854,71 @@ show controllers Serial0/x/x ! Check DCE/DTE and clock rate</pre></div>
     <div class="phase" id="phase5">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">05</span>
-        <div class="phase-title-wrap"><div class="phase-name">Redundancy</div><div class="phase-tagline">STP, HSRP, and EtherChannel for resilience</div></div>
-        <div class="phase-badges"><span class="badge planned">Planned</span></div>
+        <div class="phase-title-wrap"><div class="phase-name">DHCP</div><div class="phase-tagline">Automatic IP assignment across all 4 sites</div></div>
+        <div class="phase-badges"><span class="badge done">✓ Complete</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
-        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">This phase hasn't started yet. Documentation will be added as work progresses.</p></div>
+        <div class="phase-section">
+          <div class="phase-section-title">Overview</div>
+          <p class="phase-text">Instead of manually assigning IPs to every PC across 4 sites, DHCP pools on each branch router hand out addresses automatically. HQ runs 3 pools — Users, Servers, and VoIP. First 9 IPs on every subnet are excluded to protect infrastructure addresses (routers, switches, servers).</p>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">HQ Sydney — DHCP Config</div>
+          <div class="code-label">HQ-SYD-R1 — 3 pools for Users, Servers, VoIP</div>
+          <div class="code-block"><pre>ip dhcp excluded-address 10.1.1.1 10.1.1.9
+ip dhcp excluded-address 10.1.2.1 10.1.2.9
+ip dhcp excluded-address 10.1.3.1 10.1.3.9
+
+ip dhcp pool HQ-USERS
+ network 10.1.1.0 255.255.255.0
+ default-router 10.1.1.1
+ dns-server 8.8.8.8
+
+ip dhcp pool HQ-SERVERS
+ network 10.1.2.0 255.255.255.0
+ default-router 10.1.2.1
+ dns-server 8.8.8.8
+
+ip dhcp pool HQ-VOIP
+ network 10.1.3.0 255.255.255.0
+ default-router 10.1.3.1
+ dns-server 8.8.8.8</pre></div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Verification Commands</div>
+          <div class="code-block"><pre>show ip dhcp binding    ! See all assigned leases
+show ip dhcp pool       ! Pool stats and usage
+show ip dhcp conflict   ! Check for conflicts (want: empty)</pre></div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Key Concept</div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 DORA — How DHCP works</div>
+            <p><strong>Discover</strong> — PC broadcasts "anyone got an IP for me?"<br>
+            <strong>Offer</strong> — DHCP server replies with a proposed IP<br>
+            <strong>Request</strong> — PC formally requests that IP<br>
+            <strong>Acknowledge</strong> — Server confirms the lease<br><br>
+            Every IP assigned automatically without touching a single PC manually.</p>
+          </div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Progress Checklist</div>
+          <div class="tag-row">
+            <span class="tag teal">✓ DHCP pools configured on all branch routers</span>
+            <span class="tag teal">✓ First 9 IPs excluded on every subnet</span>
+            <span class="tag teal">✓ All PCs across 4 sites getting IPs automatically</span>
+            <span class="tag teal">✓ Verified with show ip dhcp binding</span>
+            <span class="tag teal">✓ Zero conflicts confirmed</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="phase" id="phase6">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">06</span>
-        <div class="phase-title-wrap"><div class="phase-name">Services</div><div class="phase-tagline">DHCP, DNS, NTP centralised across the network</div></div>
+        <div class="phase-title-wrap"><div class="phase-name">Redundancy</div><div class="phase-tagline">STP, HSRP, and EtherChannel for resilience</div></div>
         <div class="phase-badges"><span class="badge planned">Planned</span></div>
         <span class="phase-arrow">›</span>
       </div>
@@ -877,36 +930,206 @@ show controllers Serial0/x/x ! Check DCE/DTE and clock rate</pre></div>
     <div class="phase" id="phase7">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">07</span>
-        <div class="phase-title-wrap"><div class="phase-name">NAT</div><div class="phase-tagline">Network Address Translation for internet access</div></div>
-        <div class="phase-badges"><span class="badge planned">Planned</span></div>
+        <div class="phase-title-wrap"><div class="phase-name">NAT &amp; Internet Access</div><div class="phase-tagline">Private IPs translated to public — simulated internet browsing</div></div>
+        <div class="phase-badges"><span class="badge done">✓ Complete</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
-        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">This phase hasn't started yet. Documentation will be added as work progresses.</p></div>
+        <div class="phase-section">
+          <div class="phase-section-title">Overview</div>
+          <p class="phase-text">Built a simulated internet using an <strong>INTERNET-SIM</strong> router and <strong>WEB-SERVER</strong>. PAT (NAT overload) on HQ-SYD-R1 translates all private <code>10.x.x.x</code> addresses to a single public IP <code>203.0.115.2</code>. HQ-PC1 successfully browsed a webpage through NAT — the final proof of end-to-end internet connectivity.</p>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">PAT Configuration</div>
+          <div class="code-label">HQ-SYD-R1 — NAT overload (PAT)</div>
+          <div class="code-block"><pre>! Define inside and outside interfaces
+interface GigabitEthernet0/0/0
+ ip nat inside
+
+interface Serial0/1/0
+ ip nat outside
+
+! ACL to match private traffic to translate
+access-list 1 permit 10.0.0.0 0.255.255.255
+
+! PAT — translate to outside interface IP
+ip nat inside source list 1 interface Serial0/1/0 overload
+
+! Default route toward ISP
+ip route 0.0.0.0 0.0.0.0 10.1.254.2</pre></div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Troubleshooting</div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ NAT translating to private IP instead of public</div>
+            <p>NAT was overloading to the wrong interface — the private-side interface instead of the public-side. Fixed by specifying the correct outside interface in the NAT overload statement.</p>
+          </div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ Missing default route on HQ router</div>
+            <p>Packets were being translated but had nowhere to go — no default route existed pointing toward the ISP. Added <code>ip route 0.0.0.0 0.0.0.0</code> toward ISP-CORE.</p>
+          </div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ INTERNET-SIM missing return route</div>
+            <p>Outbound packets reached the web server but replies dropped — INTERNET-SIM had no route back to the NAT public subnet <code>203.0.115.0/30</code>. Added a static return route.</p>
+          </div>
+          <div class="warning-box">
+            <div class="warning-box-title">⚠️ Two conflicting default routes — 50% packet loss</div>
+            <p>Two default routes with equal metrics were installed simultaneously, splitting traffic between the primary and backup path. One was pointing the wrong direction causing half of all packets to drop. Removed the conflicting route.</p>
+          </div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Key Concept</div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 NAT must work in both directions</div>
+            <p>Outbound translation alone isn't enough. The internet-side router must have a return route back to the NAT public IP subnet — otherwise reply packets have nowhere to go and get dropped. Always think about the return path.</p>
+          </div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Verification</div>
+          <div class="code-block"><pre>show ip nat translations   ! See active NAT table entries</pre></div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Progress Checklist</div>
+          <div class="tag-row">
+            <span class="tag teal">✓ INTERNET-SIM and WEB-SERVER built</span>
+            <span class="tag teal">✓ PAT configured on HQ-SYD-R1</span>
+            <span class="tag teal">✓ Default routes added toward ISP</span>
+            <span class="tag teal">✓ Return routes confirmed on INTERNET-SIM</span>
+            <span class="tag teal">✓ HQ-PC1 browsed webpage through NAT</span>
+            <span class="tag teal">✓ NAT translations verified</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="phase" id="phase8">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">08</span>
-        <div class="phase-title-wrap"><div class="phase-name">Security</div><div class="phase-tagline">ACLs, port security, and hardening across devices</div></div>
-        <div class="phase-badges"><span class="badge planned">Planned</span></div>
+        <div class="phase-title-wrap"><div class="phase-name">Security</div><div class="phase-tagline">SSH, ACLs, port security — hardened end to end</div></div>
+        <div class="phase-badges"><span class="badge done">✓ Complete</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
-        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">This phase hasn't started yet. Documentation will be added as work progresses.</p></div>
+        <div class="phase-section">
+          <div class="phase-section-title">Overview</div>
+          <p class="phase-text">Full security hardening across the AcmeCorp network — SSH replacing Telnet on all routers, extended ACLs protecting servers, port security locking floor switch ports to authorised devices, and management ACLs restricting who can SSH to network infrastructure.</p>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">SSH v2 — Telnet Disabled</div>
+          <div class="code-label">Applied on all routers</div>
+          <div class="code-block"><pre>ip domain-name acmecorp.local
+crypto key generate rsa modulus 1024
+ip ssh version 2
+
+username admin privilege 15 secret [password]
+
+line vty 0 4
+ transport input ssh
+ login local</pre></div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Extended ACL — Server Protection</div>
+          <div class="code-block"><pre>! Allow HTTP/HTTPS from users to servers
+! Block SSH/Telnet from users to servers
+ip access-list extended PROTECT-SERVERS
+ permit tcp 10.1.1.0 0.0.0.255 10.1.2.0 0.0.0.255 eq 80
+ permit tcp 10.1.1.0 0.0.0.255 10.1.2.0 0.0.0.255 eq 443
+ deny   tcp 10.1.1.0 0.0.0.255 10.1.2.0 0.0.0.255 eq 22
+ deny   tcp 10.1.1.0 0.0.0.255 10.1.2.0 0.0.0.255 eq 23
+ permit ip any any</pre></div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Port Security — Floor Switches</div>
+          <div class="code-block"><pre>interface FastEthernet0/1
+ switchport port-security
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown</pre></div>
+          <p class="phase-text" style="margin-top:10px;">Sticky MAC learning locks each port to the first device that connects. If an unauthorised device plugs in, the port shuts down immediately.</p>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Management ACL — VTY Lines</div>
+          <div class="code-block"><pre>! Only management VLAN can SSH to routers
+access-list 10 permit 10.1.9.0 0.0.0.255
+
+line vty 0 4
+ access-class 10 in
+ transport input ssh</pre></div>
+          <p class="phase-text" style="margin-top:10px;">User PCs are completely blocked from managing infrastructure. Tested and confirmed — SSH sessions from non-management IPs are terminated immediately.</p>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Key Concept</div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 ACLs read top to bottom — first match wins</div>
+            <p>Once a packet matches a rule, the router acts on it and stops reading. Always put <strong>specific rules before general rules</strong>. There's an implicit <code>deny all</code> at the bottom of every ACL — anything not explicitly permitted is dropped.</p>
+          </div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Progress Checklist</div>
+          <div class="tag-row">
+            <span class="tag teal">✓ SSH v2 enabled on all routers</span>
+            <span class="tag teal">✓ Telnet completely blocked</span>
+            <span class="tag teal">✓ RSA 1024-bit keys generated</span>
+            <span class="tag teal">✓ Local admin accounts created (privilege 15)</span>
+            <span class="tag teal">✓ Extended ACL protecting servers</span>
+            <span class="tag teal">✓ Port security on all floor switches</span>
+            <span class="tag teal">✓ Management ACL on VTY lines</span>
+            <span class="tag teal">✓ ACL hit counts verified</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="phase" id="phase9">
       <div class="phase-header" onclick="togglePhase(this)">
         <span class="phase-num">09</span>
-        <div class="phase-title-wrap"><div class="phase-name">SD-WAN</div><div class="phase-tagline">Software-defined WAN overlay concepts applied</div></div>
-        <div class="phase-badges"><span class="badge planned">Planned</span></div>
+        <div class="phase-title-wrap"><div class="phase-name">SD-WAN Simulation</div><div class="phase-tagline">Dual ISP, floating static routes, automatic failover</div></div>
+        <div class="phase-badges"><span class="badge done">✓ Complete</span></div>
         <span class="phase-arrow">›</span>
       </div>
       <div class="phase-body">
-        <div class="phase-section"><p class="phase-text" style="color:var(--text-tertiary);font-style:italic;">This phase hasn't started yet. Documentation will be added as work progresses.</p></div>
+        <div class="phase-section">
+          <div class="phase-section-title">Overview</div>
+          <p class="phase-text">Added a second WAN link via <strong>ISP-CORE-2</strong> to simulate dual-ISP connectivity — a core SD-WAN concept. Floating static routes provide automatic failover: if the primary link drops, traffic shifts to the backup path without any manual intervention. Packet Tracer's Simulation mode was used to visualise traffic flowing hop by hop.</p>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Floating Static Routes — Failover Config</div>
+          <div class="code-block"><pre>! Primary path — lower metric (preferred)
+ip route 0.0.0.0 0.0.0.0 203.0.115.1 5
+
+! Backup path — higher metric (only used if primary fails)
+ip route 0.0.0.0 0.0.0.0 203.0.116.1 10</pre></div>
+          <p class="phase-text" style="margin-top:10px;">When the primary link goes down, the metric-5 route disappears from the routing table and the metric-10 backup automatically becomes active.</p>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">SD-WAN Concepts Covered</div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Underlay vs Overlay</div>
+            <p>The <strong>underlay</strong> is the physical network — routers, cables, ISP links. The <strong>overlay</strong> is a virtual network built on top — SD-WAN tunnels that abstract the physical links and allow intelligent traffic steering regardless of which physical path is used.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Traffic Classification and Path Steering</div>
+            <p>SD-WAN doesn't just pick the shortest path — it classifies traffic by application type and steers it to the best path for that traffic. Video conferencing might go on the low-latency link, bulk data transfers on the cheaper backup link.</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Control Plane vs Data Plane separation</div>
+            <p>Traditional routing: each router makes its own forwarding decisions independently. SD-WAN: a centralised controller makes decisions for all routers simultaneously. The <strong>control plane</strong> (decisions) is separated from the <strong>data plane</strong> (actual packet forwarding).</p>
+          </div>
+          <div class="lesson-box">
+            <div class="lesson-box-title">💡 Link Monitoring and Automatic Failover</div>
+            <p>SD-WAN continuously monitors link health — latency, jitter, packet loss. If a link degrades beyond a threshold, traffic automatically shifts to a healthier path. Floating static routes simulate this behaviour in Packet Tracer.</p>
+          </div>
+        </div>
+        <div class="phase-section">
+          <div class="phase-section-title">Progress Checklist</div>
+          <div class="tag-row">
+            <span class="tag teal">✓ ISP-CORE-2 added — second WAN link live</span>
+            <span class="tag teal">✓ Primary floating static route (metric 5)</span>
+            <span class="tag teal">✓ Backup floating static route (metric 10)</span>
+            <span class="tag teal">✓ Failover tested — backup activates on primary failure</span>
+            <span class="tag teal">✓ Packet flow visualised in Simulation mode</span>
+            <span class="tag teal">✓ SD-WAN concepts documented</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -923,6 +1146,26 @@ show controllers Serial0/x/x ! Check DCE/DTE and clock rate</pre></div>
     </div>
 
   </div><!-- end project-content -->
+
+  <!-- KEY COMMANDS REFERENCE -->
+  <div class="project-content" id="commands" style="margin-top:48px; padding-bottom:60px;">
+    <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:32px;">
+      <div class="phase-section-title" style="margin-bottom:20px;">Key Commands Mastered</div>
+      <div class="code-block"><pre>show ip interface brief      ! Interface status and IPs
+show ip route                ! Full routing table
+show ip ospf neighbor        ! OSPF adjacency states
+show vlan brief              ! VLAN assignments
+show interfaces trunk        ! Trunk port status
+show ip nat translations     ! Active NAT entries
+show ip access-lists         ! ACL rules and hit counts
+show port-security           ! Port security status
+show ip dhcp binding         ! DHCP lease table
+show ip dhcp conflict        ! DHCP conflicts (want: empty)
+show controllers             ! Physical serial interface (DCE/DTE)
+show running-config          ! Full device configuration</pre></div>
+    </div>
+  </div>
+
 </div><!-- end project-body -->
 
 <footer>
