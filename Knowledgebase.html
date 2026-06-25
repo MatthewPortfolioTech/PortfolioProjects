@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisco CLI Knowledge Base — Matthew Mahasay</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --bg-card: #111118; --bg-elevated: #16161f;
+    --border: rgba(255,255,255,0.08); --border-accent: rgba(255,255,255,0.15);
+    --text-primary: #f5f5f7; --text-secondary: #86868b; --text-tertiary: #48484a;
+    --blue: #0071e3; --blue-light: #2997ff; --teal: #30d158;
+    --orange: #ff9f0a; --purple: #bf5af2; --red: #ff453a;
+    --code-bg: #0d1117;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text-primary); font-family: var(--font); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,10,15,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 5%; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-size: 17px; font-weight: 600; color: var(--text-primary); text-decoration: none; letter-spacing: -0.3px; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-tag { font-size: 11px; font-weight: 600; color: var(--blue-light); background: rgba(0,113,227,0.15); border: 1px solid rgba(0,113,227,0.25); padding: 4px 12px; border-radius: 980px; letter-spacing: 0.5px; }
+  .nav-back { color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .nav-back:hover { color: var(--text-primary); }
+
+  /* HERO */
+  .kb-hero { padding: 100px 5% 60px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+  .kb-hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 0%, transparent 80%); }
+  .kb-hero-glow { position: absolute; width: 500px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(0,113,227,0.1) 0%, transparent 70%); top: -80px; left: 50%; transform: translateX(-50%); }
+  .kb-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .kb-label { font-size: 12px; font-weight: 600; color: var(--blue-light); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .kb-title { font-size: clamp(32px, 6vw, 64px); font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin-bottom: 16px; }
+  .kb-desc { font-size: 17px; color: var(--text-secondary); max-width: 600px; line-height: 1.7; margin-bottom: 32px; }
+  .kb-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+  .kb-meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .kb-meta-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .kb-meta-value { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+
+  /* LAYOUT */
+  .kb-body { max-width: 1100px; margin: 0 auto; padding: 60px 5%; display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start; }
+
+  /* TOC */
+  .toc { position: sticky; top: 72px; }
+  .toc-label { font-size: 11px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+  .toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .toc-list a { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-secondary); text-decoration: none; padding: 7px 12px; border-radius: 8px; transition: all 0.15s; border-left: 2px solid transparent; }
+  .toc-list a:hover { color: var(--text-primary); background: var(--bg-card); border-left-color: var(--border-accent); }
+  .toc-list a.active { color: var(--blue-light); background: rgba(0,113,227,0.1); border-left-color: var(--blue-light); }
+  .toc-num { font-size: 10px; color: var(--text-tertiary); font-weight: 600; min-width: 16px; }
+
+  /* CONTENT */
+  .kb-content { min-width: 0; }
+
+  /* SECTION */
+  .kb-section { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color 0.2s; }
+  .kb-section:hover { border-color: var(--border-accent); }
+  .kb-section-header { display: flex; align-items: center; gap: 16px; padding: 18px 24px; cursor: pointer; background: var(--bg-card); transition: background 0.2s; user-select: none; }
+  .kb-section-header:hover { background: var(--bg-elevated); }
+  .kb-section-num { font-size: 10px; font-weight: 700; color: var(--text-tertiary); letter-spacing: 1px; min-width: 24px; }
+  .kb-section-title { font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.2px; flex: 1; }
+  .kb-section-arrow { color: var(--text-tertiary); font-size: 13px; transition: transform 0.25s; flex-shrink: 0; }
+  .kb-section.open .kb-section-arrow { transform: rotate(90deg); }
+  .kb-section-body { display: none; padding: 0 24px 24px; background: var(--bg-card); border-top: 1px solid var(--border); }
+  .kb-section.open .kb-section-body { display: block; }
+
+  /* CONTENT ELEMENTS */
+  .kb-text { font-size: 14px; color: var(--text-secondary); line-height: 1.75; margin: 16px 0 12px; }
+  .kb-text strong { color: var(--text-primary); font-weight: 500; }
+  .kb-text code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; color: var(--blue-light); }
+
+  .code-label { font-size: 11px; color: var(--text-tertiary); font-weight: 500; margin: 16px 0 6px; display: flex; align-items: center; gap: 6px; }
+  .code-label::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: rgba(255,159,10,0.6); display: inline-block; }
+  .code-block { background: var(--code-bg); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; overflow-x: auto; }
+  .code-block pre { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 12.5px; line-height: 1.75; color: #c9d1d9; white-space: pre; }
+  .code-block pre .comment { color: #6e7681; }
+
+  .kb-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0 12px; }
+  .kb-table th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0.5px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  .kb-table td { padding: 10px 14px; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12.5px; }
+  .kb-table td code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; color: var(--blue-light); background: rgba(41,151,255,0.1); padding: 2px 6px; border-radius: 4px; }
+  .kb-table tr:last-child td { border-bottom: none; }
+  .kb-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .tip-box { background: rgba(48,209,88,0.06); border: 1px solid rgba(48,209,88,0.2); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .tip-box-title { font-size: 12px; font-weight: 600; color: var(--teal); margin-bottom: 6px; }
+  .tip-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+  .tip-box p code { color: var(--teal); background: rgba(48,209,88,0.1); padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; }
+
+  .warn-box { background: rgba(255,159,10,0.06); border: 1px solid rgba(255,159,10,0.2); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .warn-box-title { font-size: 12px; font-weight: 600; color: var(--orange); margin-bottom: 6px; }
+  .warn-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+
+  .sub-heading { font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 20px 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 5%; display: flex; align-items: center; justify-content: space-between; background: var(--bg); flex-wrap: wrap; gap: 12px; }
+  .footer-logo { font-size: 15px; font-weight: 600; color: var(--text-secondary); }
+  .footer-copy { font-size: 13px; color: var(--text-tertiary); }
+
+  @media(max-width: 900px) { .kb-body { grid-template-columns: 1fr; } .toc { display: none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">MM</a>
+  <div class="nav-right">
+    <span class="nav-tag">CISCO IOS</span>
+    <a href="index.html" class="nav-back">← Portfolio</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="kb-hero">
+  <div class="kb-hero-grid"></div>
+  <div class="kb-hero-glow"></div>
+  <div class="kb-hero-inner">
+    <div class="kb-label">Reference</div>
+    <h1 class="kb-title">Cisco CLI<br>Knowledge Base</h1>
+    <p class="kb-desc">A personal reference covering Cisco IOS commands built through CCNA study and the AcmeCorp network project. Updated as I learn.</p>
+    <div class="kb-meta">
+      <div class="kb-meta-item"><span class="kb-meta-label">Author</span><span class="kb-meta-value">Matthew Mahasay</span></div>
+      <div class="kb-meta-item"><span class="kb-meta-label">Platform</span><span class="kb-meta-value">Cisco IOS · Packet Tracer</span></div>
+      <div class="kb-meta-item"><span class="kb-meta-label">Updated</span><span class="kb-meta-value">June 2026</span></div>
+      <div class="kb-meta-item"><span class="kb-meta-label">Sections</span><span class="kb-meta-value">20 Topics</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="kb-body">
+
+  <!-- TOC -->
+  <aside class="toc">
+    <div class="toc-label">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#s1"><span class="toc-num">01</span> CLI Modes</a></li>
+      <li><a href="#s2"><span class="toc-num">02</span> Navigation</a></li>
+      <li><a href="#s3"><span class="toc-num">03</span> Hostname</a></li>
+      <li><a href="#s4"><span class="toc-num">04</span> Interfaces</a></li>
+      <li><a href="#s5"><span class="toc-num">05</span> VLANs</a></li>
+      <li><a href="#s6"><span class="toc-num">06</span> Routing</a></li>
+      <li><a href="#s7"><span class="toc-num">07</span> Inter-VLAN</a></li>
+      <li><a href="#s8"><span class="toc-num">08</span> DHCP</a></li>
+      <li><a href="#s9"><span class="toc-num">09</span> NAT / PAT</a></li>
+      <li><a href="#s10"><span class="toc-num">10</span> SSH</a></li>
+      <li><a href="#s11"><span class="toc-num">11</span> ACLs</a></li>
+      <li><a href="#s12"><span class="toc-num">12</span> STP</a></li>
+      <li><a href="#s13"><span class="toc-num">13</span> EtherChannel</a></li>
+      <li><a href="#s14"><span class="toc-num">14</span> Port Security</a></li>
+      <li><a href="#s15"><span class="toc-num">15</span> CDP &amp; LLDP</a></li>
+      <li><a href="#s16"><span class="toc-num">16</span> Hardening</a></li>
+      <li><a href="#s17"><span class="toc-num">17</span> Config Mgmt</a></li>
+      <li><a href="#s18"><span class="toc-num">18</span> Show Commands</a></li>
+      <li><a href="#s19"><span class="toc-num">19</span> Debug</a></li>
+      <li><a href="#s20"><span class="toc-num">20</span> Troubleshooting</a></li>
+      <li><a href="#subnetting"><span class="toc-num">⌘</span> Subnetting</a></li>
+    </ul>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="kb-content">
+
+    <!-- 1 CLI MODES -->
+    <div class="kb-section open" id="s1">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">01</span>
+        <span class="kb-section-title">CLI Modes</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <table class="kb-table">
+          <thead><tr><th>Mode</th><th>Prompt</th><th>How to Enter</th></tr></thead>
+          <tbody>
+            <tr><td>User EXEC</td><td><code>Router&gt;</code></td><td>Default on login</td></tr>
+            <tr><td>Privileged EXEC</td><td><code>Router#</code></td><td><code>enable</code></td></tr>
+            <tr><td>Global Config</td><td><code>Router(config)#</code></td><td><code>configure terminal</code></td></tr>
+            <tr><td>Interface Config</td><td><code>Router(config-if)#</code></td><td><code>interface [type] [id]</code></td></tr>
+            <tr><td>Line Config</td><td><code>Router(config-line)#</code></td><td><code>line vty 0 4</code></td></tr>
+            <tr><td>Router Config</td><td><code>Router(config-router)#</code></td><td><code>router ospf 1</code></td></tr>
+            <tr><td>VLAN Config</td><td><code>Switch(config-vlan)#</code></td><td><code>vlan [id]</code></td></tr>
+            <tr><td>Sub-interface</td><td><code>Router(config-subif)#</code></td><td><code>interface Gi0/0.10</code></td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box">
+          <div class="tip-box-title">💡 Exit shortcuts</div>
+          <p><code>exit</code> → goes up one level &nbsp;|&nbsp; <code>end</code> or <code>Ctrl+Z</code> → jumps straight back to <code>#</code></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 NAVIGATION -->
+    <div class="kb-section" id="s2">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">02</span>
+        <span class="kb-section-title">Navigation &amp; Basics</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre>enable                        <span class="comment">! Enter privileged EXEC mode</span>
+configure terminal            <span class="comment">! Enter global config mode (short: conf t)</span>
+exit                          <span class="comment">! Go back one level</span>
+end                           <span class="comment">! Go back to privileged EXEC</span>
+do show run                   <span class="comment">! Run show commands from any config mode</span>
+no &lt;command&gt;                  <span class="comment">! Negate / undo any command</span>
+?                             <span class="comment">! Context-sensitive help</span>
+show run | include &lt;keyword&gt;  <span class="comment">! Filter running config output</span>
+show run | section ospf       <span class="comment">! Show only OSPF section of config</span></pre></div>
+        <div class="tip-box">
+          <div class="tip-box-title">💡 Keyboard shortcuts</div>
+          <p><code>Tab</code> autocomplete &nbsp;|&nbsp; <code>Ctrl+C</code> cancel &nbsp;|&nbsp; <code>Ctrl+Z</code> back to # &nbsp;|&nbsp; <code>↑</code> previous command</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 HOSTNAME -->
+    <div class="kb-section" id="s3">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">03</span>
+        <span class="kb-section-title">Device Identification &amp; Hostname</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre>hostname R1
+banner motd # Authorized Access Only #</pre></div>
+      </div>
+    </div>
+
+    <!-- 4 INTERFACES -->
+    <div class="kb-section" id="s4">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">04</span>
+        <span class="kb-section-title">Interface Configuration</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">Routers</div>
+        <div class="code-block"><pre>interface GigabitEthernet0/0
+ description Link to SW1
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown                   <span class="comment">! Routers are off by default</span></pre></div>
+        <div class="sub-heading">Loopback Interfaces</div>
+        <div class="code-block"><pre>interface Loopback0
+ ip address 10.0.0.1 255.255.255.255   <span class="comment">! /32 — used for OSPF router-id</span>
+ no shutdown</pre></div>
+        <div class="sub-heading">Shutdown / Enable</div>
+        <div class="code-block"><pre>no shutdown     <span class="comment">! Enable interface</span>
+shutdown        <span class="comment">! Disable interface (admin down)</span></pre></div>
+      </div>
+    </div>
+
+    <!-- 5 VLANs -->
+    <div class="kb-section" id="s5">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">05</span>
+        <span class="kb-section-title">VLANs</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">Create VLANs</div>
+        <div class="code-block"><pre>vlan 10
+ name USERS
+vlan 20
+ name SERVERS
+vlan 99
+ name MANAGEMENT</pre></div>
+        <div class="sub-heading">Access Ports</div>
+        <div class="code-block"><pre>interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast</pre></div>
+        <div class="sub-heading">Trunk Ports</div>
+        <div class="code-block"><pre>interface GigabitEthernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,99</pre></div>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show vlan brief
+show interfaces trunk
+show interfaces Fa0/1 switchport</pre></div>
+      </div>
+    </div>
+
+    <!-- 6 ROUTING -->
+    <div class="kb-section" id="s6">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">06</span>
+        <span class="kb-section-title">Routing</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">Static Routes</div>
+        <div class="code-block"><pre>ip route 192.168.2.0 255.255.255.0 192.168.1.2     <span class="comment">! Via next-hop IP</span>
+ip route 192.168.2.0 255.255.255.0 GigabitEthernet0/1 <span class="comment">! Via exit interface</span>
+ip route 192.168.2.0 255.255.255.0 192.168.1.2 115 <span class="comment">! Floating static (AD 115)</span></pre></div>
+        <div class="sub-heading">Default Route</div>
+        <div class="code-block"><pre>ip route 0.0.0.0 0.0.0.0 203.0.113.1   <span class="comment">! Send everything unknown here</span></pre></div>
+        <div class="sub-heading">OSPF</div>
+        <div class="code-block"><pre>router ospf 1
+ router-id 1.1.1.1
+ network 192.168.1.0 0.0.0.255 area 0   <span class="comment">! Wildcard mask — NOT subnet mask</span>
+ passive-interface GigabitEthernet0/0   <span class="comment">! No hellos to end devices</span>
+ default-information originate          <span class="comment">! Inject default route into OSPF</span></pre></div>
+        <div class="tip-box">
+          <div class="tip-box-title">💡 Wildcard mask = inverse of subnet mask</div>
+          <p>/24 → <code>0.0.0.255</code> &nbsp;|&nbsp; /30 → <code>0.0.0.3</code> &nbsp;|&nbsp; /32 → <code>0.0.0.0</code></p>
+        </div>
+        <div class="sub-heading">Verify OSPF</div>
+        <div class="code-block"><pre>show ip ospf neighbor     <span class="comment">! Must show FULL state</span>
+show ip ospf interface
+show ip route ospf        <span class="comment">! Routes marked with O</span>
+show ip ospf database</pre></div>
+      </div>
+    </div>
+
+    <!-- 7 INTER-VLAN -->
+    <div class="kb-section" id="s7">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">07</span>
+        <span class="kb-section-title">Inter-VLAN Routing (Router-on-a-Stick)</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre><span class="comment">! Switch — trunk the port going to router</span>
+interface GigabitEthernet0/1
+ switchport mode trunk
+
+<span class="comment">! Router — sub-interfaces per VLAN</span>
+interface GigabitEthernet0/0
+ no shutdown                    <span class="comment">! Physical interface — no IP</span>
+
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+
+interface GigabitEthernet0/0.99
+ encapsulation dot1Q 99 native
+ ip address 192.168.99.1 255.255.255.0</pre></div>
+      </div>
+    </div>
+
+    <!-- 8 DHCP -->
+    <div class="kb-section" id="s8">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">08</span>
+        <span class="kb-section-title">DHCP</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">DHCP Server on Router</div>
+        <div class="code-block"><pre>ip dhcp excluded-address 192.168.10.1 192.168.10.10
+
+ip dhcp pool VLAN10-POOL
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 8.8.8.8 8.8.4.4
+ domain-name acmecorp.local
+ lease 7</pre></div>
+        <div class="sub-heading">DHCP Relay (ip helper-address)</div>
+        <div class="code-block"><pre>interface GigabitEthernet0/0.10
+ ip helper-address 10.0.1.5   <span class="comment">! IP of the DHCP server</span></pre></div>
+        <div class="tip-box">
+          <div class="tip-box-title">💡 DORA process</div>
+          <p><strong>Discover → Offer → Request → Acknowledge</strong> — how every IP gets assigned automatically without touching a PC.</p>
+        </div>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show ip dhcp binding     <span class="comment">! All leased IPs</span>
+show ip dhcp pool
+show ip dhcp conflict    <span class="comment">! Want: empty</span></pre></div>
+      </div>
+    </div>
+
+    <!-- 9 NAT -->
+    <div class="kb-section" id="s9">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">09</span>
+        <span class="kb-section-title">NAT / PAT</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">PAT (Overload) — Most Common</div>
+        <div class="code-block"><pre>interface GigabitEthernet0/0
+ ip nat inside
+
+interface GigabitEthernet0/1
+ ip nat outside
+
+access-list 1 permit 192.168.0.0 0.0.255.255
+ip nat inside source list 1 interface GigabitEthernet0/1 overload</pre></div>
+        <div class="sub-heading">Static NAT (1:1)</div>
+        <div class="code-block"><pre>ip nat inside source static 192.168.1.100 203.0.113.10</pre></div>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show ip nat translations
+show ip nat statistics
+clear ip nat translation *   <span class="comment">! Clear table when testing</span></pre></div>
+      </div>
+    </div>
+
+    <!-- 10 SSH -->
+    <div class="kb-section" id="s10">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">10</span>
+        <span class="kb-section-title">SSH (Secure Remote Access)</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre>hostname R1
+ip domain-name acmecorp.local
+crypto key generate rsa        <span class="comment">! Enter 2048 when prompted</span>
+ip ssh version 2
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+username admin privilege 15 secret StrongP@ss1
+
+line vty 0 4
+ login local
+ transport input ssh
+ exec-timeout 10 0</pre></div>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show ip ssh
+show ssh</pre></div>
+      </div>
+    </div>
+
+    <!-- 11 ACLs -->
+    <div class="kb-section" id="s11">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">11</span>
+        <span class="kb-section-title">ACLs (Access Control Lists)</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="tip-box">
+          <div class="tip-box-title">💡 ACL Rules</div>
+          <p>Processed <strong>top-down</strong> — first match wins. Implicit <code>deny any</code> at the bottom. Put specific rules before general rules. Standard ACLs close to destination, extended close to source.</p>
+        </div>
+        <div class="sub-heading">Standard ACL (source IP only)</div>
+        <div class="code-block"><pre>access-list 10 permit 192.168.10.0 0.0.0.255
+access-list 10 deny any
+
+interface GigabitEthernet0/1
+ ip access-group 10 out</pre></div>
+        <div class="sub-heading">Extended ACL (src, dst, protocol, port)</div>
+        <div class="code-block"><pre>ip access-list extended WEBSERVER-FILTER
+ permit tcp any host 10.10.50.10 eq 443
+ permit tcp any host 10.10.50.10 eq 80
+ deny ip any any log
+
+interface GigabitEthernet0/0
+ ip access-group WEBSERVER-FILTER in</pre></div>
+        <div class="sub-heading">Common Ports</div>
+        <table class="kb-table">
+          <thead><tr><th>Port</th><th>Protocol</th></tr></thead>
+          <tbody>
+            <tr><td><code>eq 80</code></td><td>HTTP</td></tr>
+            <tr><td><code>eq 443</code></td><td>HTTPS</td></tr>
+            <tr><td><code>eq 22</code></td><td>SSH</td></tr>
+            <tr><td><code>eq 23</code></td><td>Telnet</td></tr>
+          </tbody>
+        </table>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show access-lists
+show ip interface Gi0/0</pre></div>
+      </div>
+    </div>
+
+    <!-- 12 STP -->
+    <div class="kb-section" id="s12">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">12</span>
+        <span class="kb-section-title">STP (Spanning Tree Protocol)</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre>spanning-tree vlan 10 root primary         <span class="comment">! Force root bridge</span>
+spanning-tree vlan 10 priority 4096
+
+interface FastEthernet0/1
+ spanning-tree portfast                    <span class="comment">! Skip 30s delay for end hosts</span>
+ spanning-tree bpduguard enable            <span class="comment">! Shutdown if BPDU received</span>
+
+spanning-tree portfast bpduguard default   <span class="comment">! Enable globally</span></pre></div>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show spanning-tree
+show spanning-tree vlan 10
+show spanning-tree summary
+show spanning-tree interface Fa0/1</pre></div>
+      </div>
+    </div>
+
+    <!-- 13 ETHERCHANNEL -->
+    <div class="kb-section" id="s13">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">13</span>
+        <span class="kb-section-title">EtherChannel (Port Aggregation)</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre><span class="comment">! LACP (IEEE 802.3ad) — preferred</span>
+interface range GigabitEthernet0/1-2
+ channel-group 1 mode active
+
+<span class="comment">! Configure logical Port-Channel</span>
+interface Port-channel1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,99</pre></div>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show etherchannel summary        <span class="comment">! SU = bundled, P = in bundle</span>
+show interfaces Port-channel1</pre></div>
+      </div>
+    </div>
+
+    <!-- 14 PORT SECURITY -->
+    <div class="kb-section" id="s14">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">14</span>
+        <span class="kb-section-title">Port Security</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre>interface FastEthernet0/1
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+ <span class="comment">! shutdown = disable port (default) | restrict = drop + log | protect = silent drop</span></pre></div>
+        <div class="sub-heading">Verify</div>
+        <div class="code-block"><pre>show port-security
+show port-security interface Fa0/1
+show port-security address</pre></div>
+      </div>
+    </div>
+
+    <!-- 15 CDP LLDP -->
+    <div class="kb-section" id="s15">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">15</span>
+        <span class="kb-section-title">CDP &amp; LLDP</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">CDP (Cisco proprietary)</div>
+        <div class="code-block"><pre>show cdp neighbors
+show cdp neighbors detail
+no cdp run</pre></div>
+        <div class="sub-heading">LLDP (vendor-neutral)</div>
+        <div class="code-block"><pre>lldp run
+show lldp neighbors
+show lldp neighbors detail</pre></div>
+      </div>
+    </div>
+
+    <!-- 16 HARDENING -->
+    <div class="kb-section" id="s16">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">16</span>
+        <span class="kb-section-title">Password &amp; Security Hardening</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre>enable secret StrongPass1          <span class="comment">! Always use 'secret' (MD5), not 'password'</span>
+service password-encryption        <span class="comment">! Encrypt all plaintext passwords</span>
+security passwords min-length 10
+no ip domain-lookup                <span class="comment">! Stop hanging on CLI typos</span>
+
+line console 0
+ password Cisco123
+ login
+ exec-timeout 5 0</pre></div>
+      </div>
+    </div>
+
+    <!-- 17 CONFIG MGMT -->
+    <div class="kb-section" id="s17">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">17</span>
+        <span class="kb-section-title">Saving &amp; Managing Config</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="code-block"><pre>write memory                        <span class="comment">! Save config (short: wr)</span>
+copy running-config startup-config  <span class="comment">! Same as above</span>
+show running-config                 <span class="comment">! Current config (RAM)</span>
+show startup-config                 <span class="comment">! Saved config (NVRAM)</span>
+erase startup-config                <span class="comment">! Wipe saved config</span>
+reload                              <span class="comment">! Reboot device</span></pre></div>
+        <div class="warn-box">
+          <div class="warn-box-title">⚠️ Save from # mode only</div>
+          <p><code>write memory</code> must be run from privileged EXEC (<code>#</code>), not config mode. Running it inside <code>(config)#</code> throws an invalid input error.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18 SHOW COMMANDS -->
+    <div class="kb-section" id="s18">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">18</span>
+        <span class="kb-section-title">Show Commands (Verification)</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">Routing &amp; Interfaces</div>
+        <div class="code-block"><pre>show ip interface brief
+show interfaces GigabitEthernet0/0
+show ip route
+show ip route ospf
+show ip route static
+show ip route connected</pre></div>
+        <div class="sub-heading">Switching</div>
+        <div class="code-block"><pre>show mac address-table
+show vlan brief
+show interfaces trunk
+show interfaces status</pre></div>
+        <div class="sub-heading">General Diagnostics</div>
+        <div class="code-block"><pre>ping 192.168.1.1
+ping 192.168.1.1 source Loopback0
+traceroute 192.168.2.1
+show version
+show logging
+show clock</pre></div>
+      </div>
+    </div>
+
+    <!-- 19 DEBUG -->
+    <div class="kb-section" id="s19">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">19</span>
+        <span class="kb-section-title">Debug Commands</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="warn-box">
+          <div class="warn-box-title">⚠️ Use carefully</div>
+          <p>Debug outputs can flood the console and impact performance. Always run <code>undebug all</code> when finished.</p>
+        </div>
+        <div class="code-block"><pre>debug ip ospf events
+debug ip ospf hello
+debug ip routing
+debug ip nat
+debug ip dhcp server events
+debug ip icmp
+
+undebug all              <span class="comment">! Turn off ALL debug — do this when done</span>
+terminal monitor         <span class="comment">! Enable debug on VTY sessions</span>
+terminal no monitor</pre></div>
+      </div>
+    </div>
+
+    <!-- 20 TROUBLESHOOTING -->
+    <div class="kb-section" id="s20">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">20</span>
+        <span class="kb-section-title">Troubleshooting Cheat Sheet</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <div class="sub-heading">Layer-by-Layer Approach</div>
+        <table class="kb-table">
+          <thead><tr><th>Layer</th><th>Check</th><th>Command</th></tr></thead>
+          <tbody>
+            <tr><td>L1 – Physical</td><td>Is the port up?</td><td><code>show ip interface brief</code> — look for up/up</td></tr>
+            <tr><td>L2 – Data Link</td><td>Correct VLAN? Trunk?</td><td><code>show vlan brief</code>, <code>show interfaces trunk</code></td></tr>
+            <tr><td>L3 – Network</td><td>Correct IP? Route exists?</td><td><code>show ip route</code>, <code>ping</code></td></tr>
+            <tr><td>L4+ – Transport</td><td>ACL blocking traffic?</td><td><code>show access-lists</code> — check hit counts</td></tr>
+          </tbody>
+        </table>
+        <div class="sub-heading">Can't ping between VLANs</div>
+        <div class="code-block"><pre>show ip interface brief        <span class="comment">! Sub-interfaces up/up?</span>
+show ip route                  <span class="comment">! Routes for both subnets?</span>
+show interfaces trunk          <span class="comment">! Trunk set up?</span>
+<span class="comment">! Check encapsulation dot1Q VLAN-ID matches exactly</span></pre></div>
+        <div class="sub-heading">OSPF neighbour not FULL</div>
+        <div class="code-block"><pre>show ip ospf neighbor          <span class="comment">! What state? INIT? 2WAY? EXSTART?</span>
+show ip ospf interface         <span class="comment">! Same area? Same timers? Passive?</span>
+<span class="comment">! Check: same subnet, same area, not passive, no ACL blocking</span></pre></div>
+        <div class="sub-heading">NAT not translating</div>
+        <div class="code-block"><pre>show ip nat translations       <span class="comment">! Any entries?</span>
+<span class="comment">! ip nat inside on LAN? ip nat outside on WAN?</span>
+<span class="comment">! Does ACL match inside traffic?</span>
+debug ip nat                   <span class="comment">! Watch live</span></pre></div>
+        <div class="sub-heading">DHCP clients not getting IP</div>
+        <div class="code-block"><pre>show ip dhcp pool
+show ip dhcp binding
+<span class="comment">! ip helper-address configured if client on different subnet?</span>
+<span class="comment">! Exclusion covering entire range?</span>
+show run | section dhcp</pre></div>
+      </div>
+    </div>
+
+    <!-- SUBNETTING -->
+    <div class="kb-section" id="subnetting">
+      <div class="kb-section-header" onclick="toggleSection(this)">
+        <span class="kb-section-num">⌘</span>
+        <span class="kb-section-title">Subnetting Quick Reference</span>
+        <span class="kb-section-arrow">›</span>
+      </div>
+      <div class="kb-section-body">
+        <table class="kb-table">
+          <thead><tr><th>CIDR</th><th>Subnet Mask</th><th>Hosts</th><th>Wildcard</th></tr></thead>
+          <tbody>
+            <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>0.0.0.255</td></tr>
+            <tr><td>/25</td><td>255.255.255.128</td><td>126</td><td>0.0.0.127</td></tr>
+            <tr><td>/26</td><td>255.255.255.192</td><td>62</td><td>0.0.0.63</td></tr>
+            <tr><td>/27</td><td>255.255.255.224</td><td>30</td><td>0.0.0.31</td></tr>
+            <tr><td>/28</td><td>255.255.255.240</td><td>14</td><td>0.0.0.15</td></tr>
+            <tr><td>/29</td><td>255.255.255.248</td><td>6</td><td>0.0.0.7</td></tr>
+            <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>0.0.0.3</td></tr>
+            <tr><td>/32</td><td>255.255.255.255</td><td>1 (host route)</td><td>0.0.0.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end kb-content -->
+</div><!-- end kb-body -->
+
+<footer>
+  <div class="footer-logo">Matthew Mahasay</div>
+  <div class="footer-copy">Cisco CLI Knowledge Base · Personal Reference · 2026</div>
+</footer>
+
+<script>
+function toggleSection(header) {
+  var section = header.parentElement;
+  section.classList.toggle('open');
+}
+
+var sections = document.querySelectorAll('.kb-section');
+var tocLinks = document.querySelectorAll('.toc-list a');
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      tocLinks.forEach(function(l) {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id);
+      });
+    }
+  });
+}, { threshold: 0.3, rootMargin: '-60px 0px -60% 0px' });
+sections.forEach(function(s) { observer.observe(s); });
+</script>
+</body>
+</html>
