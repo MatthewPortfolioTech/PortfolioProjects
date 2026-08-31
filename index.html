@@ -183,10 +183,10 @@
   <div class="hero-orb hero-orb-3"></div>
   <div class="hero-particles" id="particles"></div>
   <div class="hero-content container">
-    <div class="hero-eyebrow"><span></span> Aspiring Network Engineer</div>
+    <div class="hero-eyebrow"><span></span> Aspiring Infrastructure Engineer</div>
     <h1 class="hero-name">Matthew<br><span class="highlight">Mahasay</span></h1>
-    <p class="hero-title">Service Desk Analyst → Network Engineer</p>
-    <p class="hero-desc">3.5 years supporting end users and IT systems. Now channelling that foundation into networking and cloud — studying CCNA, building Packet Tracer labs, and working toward a career in cloud network engineering.</p>
+    <p class="hero-title">Service Desk Analyst → Infrastructure Engineer</p>
+    <p class="hero-desc">3.5 years supporting end users and IT systems. Now channelling that foundation into networking and cloud — studying CCNA, building Packet Tracer labs, and working toward a career in network infrastructure engineering.</p>
     <div class="hero-actions">
       <a href="#labwork" class="btn-primary">See My Projects →</a>
       <a href="#contact" class="btn-ghost">Get In Touch</a>
@@ -206,7 +206,7 @@
         <div class="section-label">About</div>
         <h2 class="section-title">Background &amp;<br>Direction</h2>
         <p>I'm a <strong>Service Desk Analyst</strong> with 3.5 years of hands-on IT experience — troubleshooting, supporting infrastructure, and being the first line of contact when things break.</p>
-        <p>That experience gave me a real appreciation for how networks and systems need to work reliably. Now I'm building toward my goal of becoming a <strong>Network Engineer</strong> — studying for CCNA, running Packet Tracer labs, and exploring AWS cloud fundamentals.</p>
+        <p>That experience gave me a real appreciation for how networks and systems need to work reliably. Now I'm building toward my goal of becoming an <strong>Infrastructure Engineer</strong> — studying for CCNA, running Packet Tracer labs, and exploring AWS cloud fundamentals.</p>
         <p>Based in <strong>Sydney, AU</strong>. Learning every day.</p>
         <div class="about-pills">
           <span class="pill">🌏 Sydney, AU</span>
@@ -228,11 +228,11 @@
           </div>
           <div class="about-item">
             <div class="about-item-icon" style="background:rgba(255,159,10,0.15);">📡</div>
-            <div><div class="about-item-title">CCNA 200-301</div><div class="about-item-sub">Cisco · Actively studying via Jeremy's IT Lab</div></div>
+            <div><div class="about-item-title">CCNA 200-301</div><div class="about-item-sub">Cisco · Actively studying via PingMyNetwork/SwitchLabs</div></div>
           </div>
           <div class="about-item">
             <div class="about-item-icon" style="background:rgba(191,90,242,0.15);">🚀</div>
-            <div><div class="about-item-title">Goal: Network Engineer</div><div class="about-item-sub">Networking + AWS · Long-term aspiration</div></div>
+            <div><div class="about-item-title">Goal: Infrastructure Engineer</div><div class="about-item-sub">Networking + AWS · Long-term aspiration</div></div>
           </div>
         </div>
       </div>
@@ -276,6 +276,18 @@
         <div class="skill-desc">Working knowledge of Windows Server environments, DNS, DHCP, and common enterprise tooling picked up through service desk work.</div>
         <div class="skill-tags"><span class="tag cyan">Windows Server</span><span class="tag cyan">DNS / DHCP</span><span class="tag gray">Active Directory</span><span class="tag gray">Remote Tools</span></div>
       </div>
+      <div class="skill-card">
+        <div class="skill-icon purple">🧰</div>
+        <div class="skill-name">Network Simulation (EVE-NG / CML)</div>
+        <div class="skill-desc">Building and testing multi-device topologies in Cisco Modeling Labs (CML) and EVE-NG — running real Cisco IOS images for deeper CCNA practice beyond Packet Tracer's limits.</div>
+        <div class="skill-tags"><span class="tag purple">CML</span><span class="tag purple">EVE-NG</span><span class="tag gray">Cisco IOS</span><span class="tag gray">Network Emulation</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon blue">🗄️</div>
+        <div class="skill-name">Virtualization (Proxmox / VMware)</div>
+        <div class="skill-desc">Running hypervisors to support home lab work — deploying and managing Windows Server 2019 and Linux virtual machines on Proxmox and VMware.</div>
+        <div class="skill-tags"><span class="tag blue">Proxmox</span><span class="tag blue">VMware</span><span class="tag gray">Windows Server 2019</span><span class="tag gray">Linux</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -287,10 +299,10 @@
     <p class="section-subtitle">Hands-on builds across networking and cloud — organised by category. More added as I progress.</p>
 
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('all', this)">✦ All <span class="tab-count">1</span></button>
+      <button class="tab-btn active" onclick="switchTab('all', this)">✦ All <span class="tab-count">3</span></button>
       <button class="tab-btn" onclick="switchTab('pt', this)">🌐 Networking <span class="tab-count">1</span></button>
       <button class="tab-btn" onclick="switchTab('cloud', this)">☁️ Cloud <span class="tab-count">0</span></button>
-      <button class="tab-btn" onclick="switchTab('homelab', this)">🔧 Home Lab <span class="tab-count">0</span></button>
+      <button class="tab-btn" onclick="switchTab('homelab', this)">🔧 Home Lab <span class="tab-count">2</span></button>
     </div>
 
     <!-- ALL -->
@@ -306,6 +318,26 @@
             <span class="lab-view-btn">View Project →</span>
           </div>
         </a>
+        <div class="lab-card red" style="cursor:default;">
+          <div class="lab-cat-badge" style="color:#ff453a;">🔧 Home Lab</div>
+          <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:14px;color:var(--text-tertiary);">⏳ Pending — Write-Up Coming Soon</div>
+          <div class="lab-title">EVE-NG / CML Network Lab</div>
+          <div class="lab-desc">A multi-device topology built in Cisco Modeling Labs (CML) — a Layer 3 router connected to two Layer 2 switches, used to practice inter-VLAN routing and switch configuration beyond Packet Tracer's scope. Full write-up and topology breakdown coming soon.</div>
+          <div class="lab-footer">
+            <div class="lab-tags"><span class="tag red">CML</span><span class="tag red">EVE-NG</span><span class="tag gray">Cisco IOS</span></div>
+            <span class="lab-view-btn" style="opacity:0.5;pointer-events:none;">Coming Soon</span>
+          </div>
+        </div>
+        <div class="lab-card red" style="cursor:default;">
+          <div class="lab-cat-badge" style="color:#ff453a;">🔧 Home Lab</div>
+          <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:14px;color:var(--text-tertiary);">🗓️ Planned — Hardware Not Yet Acquired</div>
+          <div class="lab-title">Home Lab Server (Dell PowerEdge R730xd)</div>
+          <div class="lab-desc">Planning to add a Dell PowerEdge R730xd as a dedicated home lab host — using iDRAC for out-of-band remote management, and running a hypervisor to host multiple VMs for hands-on infrastructure and virtualization practice.</div>
+          <div class="lab-footer">
+            <div class="lab-tags"><span class="tag red">iDRAC</span><span class="tag red">Dell PowerEdge</span><span class="tag gray">Proxmox / VMware</span></div>
+            <span class="lab-view-btn" style="opacity:0.5;pointer-events:none;">Coming Soon</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -334,9 +366,27 @@
 
     <!-- HOME LAB -->
     <div class="tab-panel" id="tab-homelab">
-      <div style="text-align:center; padding: 64px 0;">
-        <div style="font-size:36px; margin-bottom:16px;">🔧</div>
-        <p style="font-size:15px; color:var(--text-tertiary);">No home lab projects yet — coming soon.</p>
+      <div class="labs-grid">
+        <div class="lab-card red" style="cursor:default;">
+          <div class="lab-cat-badge" style="color:#ff453a;">🔧 Home Lab</div>
+          <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:14px;color:var(--text-tertiary);">⏳ Pending — Write-Up Coming Soon</div>
+          <div class="lab-title">EVE-NG / CML Network Lab</div>
+          <div class="lab-desc">A multi-device topology built in Cisco Modeling Labs (CML) — a Layer 3 router connected to two Layer 2 switches, used to practice inter-VLAN routing and switch configuration beyond Packet Tracer's scope. Full write-up and topology breakdown coming soon.</div>
+          <div class="lab-footer">
+            <div class="lab-tags"><span class="tag red">CML</span><span class="tag red">EVE-NG</span><span class="tag gray">Cisco IOS</span></div>
+            <span class="lab-view-btn" style="opacity:0.5;pointer-events:none;">Coming Soon</span>
+          </div>
+        </div>
+        <div class="lab-card red" style="cursor:default;">
+          <div class="lab-cat-badge" style="color:#ff453a;">🔧 Home Lab</div>
+          <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:14px;color:var(--text-tertiary);">🗓️ Planned — Hardware Not Yet Acquired</div>
+          <div class="lab-title">Home Lab Server (Dell PowerEdge R730xd)</div>
+          <div class="lab-desc">Planning to add a Dell PowerEdge R730xd as a dedicated home lab host — using iDRAC for out-of-band remote management, and running a hypervisor to host multiple VMs for hands-on infrastructure and virtualization practice.</div>
+          <div class="lab-footer">
+            <div class="lab-tags"><span class="tag red">iDRAC</span><span class="tag red">Dell PowerEdge</span><span class="tag gray">Proxmox / VMware</span></div>
+            <span class="lab-view-btn" style="opacity:0.5;pointer-events:none;">Coming Soon</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -408,7 +458,7 @@
 
 <footer>
   <div class="footer-logo">Matthew Mahasay</div>
-  <div class="footer-copy">© 2026 · Sydney, AU · Aspiring Network Engineer</div>
+  <div class="footer-copy">© 2026 · Sydney, AU · Aspiring Infrastructure Engineer</div>
 </footer>
 
 <script>
